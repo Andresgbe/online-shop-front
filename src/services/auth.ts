@@ -1,5 +1,5 @@
 import api from './api';
-import { User, AuthTokens } from '../types';
+import type { User, AuthTokens } from '../types';
 
 interface RegisterData {
   name: string;
