@@ -1,55 +1,30 @@
-import { useEffect } from 'react';
+// BrowserRouter: envuelve toda la app y activa el sistema de rutas
+// Routes: contenedor de todas las rutas
+// Route: define una ruta específica (path + componente a mostrar)
+// Navigate: redirige automáticamente de una ruta a otra
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { useAuthStore } from './store/auth';
 
+// Toaster: muestra notificaciones tipo toast (éxito, error, etc)
+import { Toaster } from 'react-hot-toast';
+
+// Las páginas que va a manejar el router
+// Products aún no existe, la creamos en el paso 3
+import Products from './pages/Products';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Products from './pages/Products';
-import Layout from './components/Layout';
-import ProtectedRoute from './components/ProtectedRoute';
 
-const Home = () => (
-  <div className="text-center mt-20">
-    <h1 className="text-4xl font-bold text-gray-900">Bienvenido a la Tienda</h1>
-    <p className="mt-4 text-gray-500">Encuentra los mejores productos aquí.</p>
-  </div>
-);
-
-function App() {
-  const { loadUser, isLoading } = useAuthStore();
-
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-gray-500 font-medium">Cargando sesión...</div>
-      </div>
-    );
-  }
-
+export default function App() {
   return (
     <BrowserRouter>
+      {/* Toaster va aquí arriba para que funcione en toda la app */}
       <Toaster position="top-right" />
       <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-
-          <Route element={<ProtectedRoute />}>
-            <Route path="/profile" element={<div>Perfil del Usuario (Protegido)</div>} />
-          </Route>
-        </Route>
-
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Si alguien va a "/" lo mandamos directo a "/products" */}
+        <Route path="/" element={<Navigate to="/products" replace />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;
