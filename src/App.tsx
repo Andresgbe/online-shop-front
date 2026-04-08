@@ -1,29 +1,45 @@
-// BrowserRouter: envuelve toda la app y activa el sistema de rutas
-// Routes: contenedor de todas las rutas
-// Route: define una ruta específica (path + componente a mostrar)
-// Navigate: redirige automáticamente de una ruta a otra
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-
-// Toaster: muestra notificaciones tipo toast (éxito, error, etc)
 import { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
 
-// Las páginas que va a manejar el router
-// Products aún no existe, la creamos en el paso 3
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import { useAuthStore } from './store/auth';
+
 import Products from './pages/Products';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
 export default function App() {
+  // loadUser: al iniciar la app, revisa si hay tokens en localStorage
+  // y si los hay, los usa para obtener el perfil del usuario.
+  // Así la sesión se mantiene aunque el usuario recargue la página.
+  const loadUser = useAuthStore((state) => state.loadUser);
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   return (
     <BrowserRouter>
-      {/* Toaster va aquí arriba para que funcione en toda la app */}
       <Toaster position="top-right" />
       <Routes>
-        {/* Si alguien va a "/" lo mandamos directo a "/products" */}
-        <Route path="/" element={<Navigate to="/products" replace />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* Rutas públicas — dentro de Layout (tienen navbar) */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<Navigate to="/products" replace />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+
+        {/* Rutas privadas — dentro de Layout + protección de auth */}
+        {/* Aquí irán: /cart, /orders, /profile cuando los construyas */}
+        <Route element={<Layout />}>
+          <Route element={<ProtectedRoute />}>
+            {/* <Route path="/cart" element={<Cart />} /> */}
+            {/* <Route path="/orders" element={<Orders />} /> */}
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
