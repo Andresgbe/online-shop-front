@@ -1,12 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { productsService, categoriesService } from '../services/products';
+import ProductCard from '../components/ProductCard';
 import type { ProductFilters } from '../services/products';
 import type { Product, Category } from '../types';
 
-// SkeletonCard: es la tarjeta "fantasma" que aparece mientras cargan
-// los productos. El efecto animate-pulse hace que parpadee en gris.
-// Es mejor experiencia que mostrar una pantalla en blanco.
 function SkeletonCard() {
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
@@ -17,62 +14,6 @@ function SkeletonCard() {
         <div className="flex items-center justify-between pt-1">
           <div className="h-5 bg-gray-200 rounded w-1/4" />
           <div className="h-8 bg-gray-200 rounded-lg w-1/3" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ProductCard: la tarjeta de cada producto individual.
-// Recibe un "product" como prop (dato que le pasa el componente padre).
-// Al hacer click navega a /products/:id (detalle del producto).
-function ProductCard({ product }: { product: Product }) {
-  const navigate = useNavigate();
-  const outOfStock = product.stock === 0;
-
-  return (
-    <div
-      onClick={() => navigate(`/products/${product.id}`)}
-      className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
-    >
-      <div className="relative h-56 overflow-hidden bg-gray-50">
-        {product.images.length > 0 ? (
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300">
-            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-        )}
-        {outOfStock && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-            <span className="bg-white text-gray-800 text-xs font-semibold px-3 py-1 rounded-full">
-              Sin stock
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="p-4">
-        <h3 className="font-medium text-gray-900 text-sm leading-snug line-clamp-2 mb-1">
-          {product.name}
-        </h3>
-        <p className="text-xs text-gray-400 mb-3">{product.category.name}</p>
-        <div className="flex items-center justify-between">
-          <span className="text-base font-bold text-gray-900">
-            ${Number(product.price).toFixed(2)}
-          </span>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            disabled={outOfStock}
-            className="text-xs px-3 py-1.5 bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {outOfStock ? 'Sin stock' : 'Agregar'}
-          </button>
         </div>
       </div>
     </div>
